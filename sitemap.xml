@@ -2,44 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.bnbexteriors.com/</loc>
-    <lastmod>2026-06-29</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.bnbexteriors.com/gutter-cleaning/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <loc>https://www.bnbexteriors.com/gutter-cleaning-nanaimo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.bnbexteriors.com/roof-cleaning-moss-removal/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <loc>https://www.bnbexteriors.com/roof-cleaning-moss-removal-nanaimo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.bnbexteriors.com/soft-washing/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <loc>https://www.bnbexteriors.com/soft-washing-nanaimo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.bnbexteriors.com/window-cleaning/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <loc>https://www.bnbexteriors.com/window-cleaning-nanaimo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.bnbexteriors.com/holiday-lighting/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <loc>https://www.bnbexteriors.com/holiday-light-installation-nanaimo/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.bnbexteriors.com/contact/</loc>
-    <lastmod>2026-06-29</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
 </urlset>
