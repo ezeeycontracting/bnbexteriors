@@ -1,5 +1,5 @@
-# PRODUCTION ROBOTS — use this at go-live on https://www.bnbexteriors.com
-# Rename/replace robots.txt with this file once DNS points to production.
+# PRODUCTION robots.txt — use this at go-live.
+# At launch, copy this file over robots.txt (i.e. rename to robots.txt) and redeploy.
 User-agent: *
 Allow: /
 
