@@ -1,0 +1,16 @@
+# ─────────────────────────────────────────────────────────────
+# B&B Exteriors — Cloudflare Pages _redirects
+# Canonical domain: https://bnbexteriors.com  (non-www)
+# ─────────────────────────────────────────────────────────────
+
+# Force www → non-www (preserves path + query via :splat)
+https://www.bnbexteriors.com/* https://bnbexteriors.com/:splat 301!
+
+# ── Legacy 301 redirect map (old URL → new destination) ──
+# This is a BRAND-NEW site — the client provided no prior website, so there are
+# no legacy URLs to redirect yet. If Google Search Console later surfaces any
+# old/indexed URLs (or 404s during the 4–8 week monitoring window), add a
+# 1:1 301 here (e.g.  /old-page  /  301) and redeploy. Do NOT mass-redirect
+# unknown paths to "/" — let them hit the custom 404.html instead.
+#
+# (No catch-all rule on purpose: unknown paths should return the 404 page.)
