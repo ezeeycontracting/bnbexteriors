@@ -1,6 +1,6 @@
-# PREVIEW ROBOTS — blocks all crawlers.
-# This site first deploys to a public *.pages.dev preview URL, which must
-# NOT be indexed. At go-live on the production domain, replace this file
-# with the contents of robots-production.txt (see LOOSE-ENDS.md).
+# PREVIEW / STAGING robots.txt — BLOCKS ALL CRAWLERS.
+# This file ships with the *.pages.dev preview so it is NOT indexed.
+# AT GO-LIVE: replace this file's contents with robots-production.txt
+# (which allows crawling and references the sitemap).
 User-agent: *
 Disallow: /
