@@ -1,4 +1,6 @@
+# PREVIEW ROBOTS — blocks all crawlers.
+# This site first deploys to a public *.pages.dev preview URL, which must
+# NOT be indexed. At go-live on the production domain, replace this file
+# with the contents of robots-production.txt (see LOOSE-ENDS.md).
 User-agent: *
-Allow: /
-
-Sitemap: https://bnbexteriors.com/sitemap.xml
+Disallow: /
