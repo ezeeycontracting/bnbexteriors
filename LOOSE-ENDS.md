@@ -1,100 +1,184 @@
 # B&B Exteriors — Migration Loose Ends & Go-Live Checklist
 
-**Prepared:** 2026-06-29
-**New build location:** `./dist` (static site, ready for Cloudflare Pages)
-**Canonical production domain:** `https://www.bnbexteriors.com` (www, https — matches old site)
-**Old site crawled:** `https://bnbexteriors.com` (Wix)
+**Prepared:** 2026-06-30
+**New build location:** `./dist` (deploy to Cloudflare Pages)
+**Old site (SEO source):** https://www.bnbexteriors.com (Wix)
+**Chosen canonical host:** `https://www.bnbexteriors.com` (www — matches the old Wix canonical & sitemap)
 
-This file lists everything a human still needs to do or verify. The priority throughout is **preserving SEO equity** while migrating off the old Wix site.
-
----
-
-## 1. What was carried over (done)
-
-- **All 7 old URLs accounted for** (from `/sitemap.xml` → `/pages-sitemap.xml`):
-  | Old URL | Old page | New page | Action |
-  |---|---|---|---|
-  | `/` | Home | `/` | Kept / rebuilt |
-  | `/general-9` | Gutter Cleaning | `/gutter-cleaning/` | Rebuilt + 301 |
-  | `/general-9-1` | Roof Cleaning & Moss Removal | `/roof-cleaning-moss-removal/` | Rebuilt + 301 |
-  | `/general-9-2` | Soft Washing (Softwashing) | `/soft-washing/` | Rebuilt + 301 |
-  | `/general-9-3` | Window Cleaning | `/window-cleaning/` | Rebuilt + 301 |
-  | `/general-9-4` | Holiday Lighting | `/holiday-lighting/` | Rebuilt + 301 |
-  | `/contact-1` | Contact | `/contact/` | Rebuilt + 301 |
-- Clean folder URLs (one folder + `index.html` per page), trailing-slash consistent everywhere (canonicals, internal links, sitemap, `_redirects`).
-- Per-page: unique keyword-led **title**, **meta description**, single **H1** + H2/H3 hierarchy, **self-referencing canonical**, **Open Graph + Twitter** tags, descriptive **image filenames + alt text**, descriptive **internal links**.
-- **Body copy preserved** (not just meta): the real ranking content from each old service page was recreated (e.g. "we NEVER pressure wash roofs", 1–3 year moss treatment, 1–2× yearly gutter cleaning, reverse-S window method, biodegradable/eco/pet-friendly soft wash). New FAQ section added to the homepage with `FAQPage` schema.
-- **JSON-LD schema:** `HomeAndConstructionBusiness` (LocalBusiness) with NAP/geo/hours/areaServed/sameAs/aggregateRating, `WebSite`, `Organization`, `FAQPage` (home), plus `Service` + `BreadcrumbList` on every service page and `ContactPage` on contact.
-- **No orphan pages:** every service page is linked from the homepage service cards (or footer for Holiday Lighting), from the footer of every page, and from an "Other Services" cross-link block on each service page, and is in `sitemap.xml`.
-- **Self-contained:** every image/icon/favicon/font is local (system font stack, no Google Fonts), no hotlinks, no placeholder services. Hero photos downscaled/recompressed for Core Web Vitals.
-- **Forms:** First Name and Last Name are **separate fields** (`name="first_name"` / `name="last_name"`) on both the home and contact forms, per the revision note. Phone CTA is present site-wide and was not removed.
+This file lists everything a human still needs to do or verify. Most items require account
+access (Search Console, Analytics, Google Business Profile, DNS) that cannot be reached from
+the public site alone.
 
 ---
 
-## 2. ⚠️ MUST DO before / at go-live (SEO-critical)
+## 1. Old URL inventory & redirect mapping
 
-1. **Swap robots.txt at go-live.** `dist/robots.txt` currently **blocks all crawlers** so the public `*.pages.dev` preview is not indexed. When the production domain is live, replace `robots.txt` with the contents of **`robots-production.txt`** (`Allow: /` + `Sitemap:` line). **If you skip this, the live site will be deindexed.**
-2. **Tracking IDs were NOT found on the old site and are NOT yet installed.** A scan of the old `bnbexteriors.com` source surfaced **no GTM container ID, no GA4 measurement ID, and no Meta Pixel**. Wix may have injected them through its dashboard rather than the page source.
-   - **Action:** Log into the client's **existing** Google Tag Manager / GA4 / Meta accounts (per SOP Addendum A — *reuse, never recreate*), get the real IDs, and paste them into the **commented GTM placeholder block** present in the `<head>` (and the `<noscript>` block after `<body>`) of `dist/index.html`, then add the same to each sub-page. Verify in GA4 Realtime after launch.
-   - If the client genuinely had no analytics before, create GA4 + GTM now to start a baseline — but confirm first.
-3. **Replace placeholder testimonials & rating.** The 3 homepage reviews (Sarah M., David T., Jennifer L.) are demo placeholders. The `aggregateRating` schema is set to `5.0 / reviewCount 3` to match what's shown. Before launch, swap in **real Google Business Profile reviews** and update `reviewCount`/`ratingValue` to match reality (fabricated review markup risks a Google penalty).
-4. **Confirm NAP character-for-character against the Google Business Profile.** Used from the old site: **B&B Exteriors · Nanaimo, BC, Canada · 250-268-9826 · info@bnbexteriors.com · Mon–Sat 8am–6pm**. The old site shows no street address (service-area business). Verify the exact name, any address, and phone against GBP — I cannot access GBP.
-5. **Wire the lead form to a real endpoint/webhook.** Both forms currently use a demo JS handler (no submission). Connect to a real handler (Cloudflare Pages Function, Formspree, or a Make/Zapier webhook). Map fields `first_name`, `last_name`, `phone`, `email`, `service`, `message` (+ `address` on contact). Per SOP Addendum H: set **Reply-To = customer's email**, send from a domain with SPF/DKIM/DMARC so notifications don't hit spam, and test deliverability to Gmail/Outlook. A honeypot field (`company`) is already in place.
+Crawled the homepage + `/sitemap.xml` → `/pages-sitemap.xml` + `/robots.txt`. The old Wix
+sitemap (last modified 2024-12-27) contained **7 URLs**, all accounted for:
 
----
+| Old URL (www.bnbexteriors.com) | Old purpose | New destination | Status |
+|---|---|---|---|
+| `/` | Home | `/` | Rebuilt (home) |
+| `/general-9` | Gutter Cleaning | `/gutter-cleaning-nanaimo/` | Rebuilt + 301 |
+| `/general-9-1` | Roof Cleaning & Moss Removal | `/roof-cleaning-moss-removal-nanaimo/` | Rebuilt + 301 |
+| `/general-9-2` | Soft Washing | `/soft-washing-nanaimo/` | Rebuilt + 301 |
+| `/general-9-3` | Window Cleaning | `/window-cleaning-nanaimo/` | Rebuilt + 301 |
+| `/general-9-4` | Holiday Light Installation | `/holiday-light-installation-nanaimo/` | Rebuilt + 301 |
+| `/contact-1` | Contact | `/contact/` | Rebuilt + 301 |
 
-## 3. Old URLs / redirects — confidence & gaps
+- All old slugs were the opaque Wix `general-9-x` pattern. They've been redirected to clean,
+  **keyword-rich** new slugs (better for SEO) rather than kept as-is. Every redirect is a
+  **301** in `./dist/_redirects`.
+- **No catch-all redirect to home** was added (deliberate) so genuinely missing URLs return the
+  custom `404.html` instead of becoming Google soft-404s.
 
-- **Reached & confirmed:** all 7 sitemap URLs above were fetched successfully; redirects are 1:1 to the best-match new page (no mass redirect-to-home).
-- **`/general-9-4` (Holiday Lighting):** the old page had only Wix **placeholder body text** ("Every website has a story…"), but the title was "Holiday Light Installation" and it's a real service in the nav. I rebuilt it with sensible standard holiday-lighting copy (design / install / mid-season service / takedown & storage). **Confirm with the client** that this reflects the service they actually offer, and expand with real details/pricing.
-- **The complete indexed-URL set can only be confirmed in Google Search Console.** The Wix sitemap is the authoritative list I had, but Wix sites often have additional indexed/orphan URLs (e.g. `/about-us`, `/our-services`, `/testimonials`, lightbox/gallery URLs, `?lightbox=` params the old robots.txt disallowed). **Pull GSC → Pages/Coverage and `site:bnbexteriors.com`** to get the full set, and add any missing 301s to `dist/_redirects`.
-- **Monitor GSC for new 404s for 4–8 weeks** after launch and add a 1:1 301 the moment one appears (SOP Phase 9.1 / Addendum F). `_redirects` has specific rules only and **no catch-all to home** by design.
-- **Redirect targets that are safe assumptions:** the www/https canonicalization rules at the top of `_redirects` assume www is the canonical host (matches the old site's canonical + sitemap). Confirm Cloudflare custom-domain settings also resolve apex → www.
-
----
-
-## 4. Backlinks (requires Search Console / third-party tools — I could not access)
-
-- **Backlink data could not be obtained** — it requires GSC (Links report) and/or Ahrefs/Moz. Pull **GSC → Links → Top linked pages** before and after launch.
-- **Likely backlink targets to prioritize** (protect these redirects first): the **homepage**, **`/contact-1`**, and the four core service pages (`/general-9`…`/general-9-3`). Directory listings, the Facebook page, and any printed material most likely point at the homepage and the phone number.
-- **Reminder:** the full set of pages with external backlinks — and the full set of indexed URLs — **can only be confirmed in Search Console**. Treat section 3 as provisional until GSC is checked.
-
----
-
-## 5. Assets
-
-- All 6 images referenced by the design were downloaded from `static.wixstatic.com` and localized into `dist/images/` (no hotlinks).
-- **`window-cleaning-nanaimo.png`** — the original fetched asset was only **516×97px** (a low-res banner) and looked badly stretched as a cover image, so it was **replaced with a clean, branded local placeholder** (1000×750, window motif + label). **Swap in a real window-cleaning photo when available.**
-- Favicon, touch icons (16/32/180/192/512), `favicon.svg`, and the 1200×630 `og-image.jpg` were **generated locally** with a B&B brand mark. Replace with the client's real logo/branded OG image if they have one.
-- Hero/team/service photos were downscaled to 1200px and recompressed (~380–430 KB each) for page speed. Consider exporting WebP/AVIF versions for a further Core Web Vitals win.
+### ⚠️ Items to confirm
+- **The COMPLETE indexed-URL set can ONLY be confirmed in Google Search Console** (Pages /
+  Coverage → export all indexed URLs, and run a `site:bnbexteriors.com` check). The public
+  sitemap is the best public source, but Wix sites sometimes have orphaned/indexed URLs not in
+  the sitemap (e.g. `?lightbox=` variants, old blog posts). Cross-check GSC and add any missing
+  old URL to `_redirects` as a 301.
+- **`/general-9-4` (Holiday Lighting)** on the old site contained only Wix **placeholder text**
+  ("Every website has a story…"). I rebuilt it as a genuine Holiday Light Installation page with
+  real service copy so the URL keeps ranking value. **Confirm with the client that they actually
+  offer holiday lighting** and adjust/keep the page accordingly. A holiday-lighting-specific
+  photo should replace the reused exterior photo currently on that page.
 
 ---
 
-## 6. Remaining manual go-live steps (from the migration SOP)
-
-> Note: the SOP references SiteGround + `.htaccess`. This build targets **Cloudflare Pages**, so redirects use `dist/_redirects` (already written) instead of `.htaccess`. The DNS/SEO principles below still apply.
-
-1. **Deploy `dist/` to the Cloudflare Pages preview**, QA it (links, forms, mobile, schema via Rich Results Test, redirects). Get **client + SEO-partner sign-off** on the preview before cutover.
-2. **Swap `robots.txt` → production version** (section 2.1). Re-check there is **no stray `noindex`** on any production page (only `404.html` is intentionally noindex).
-3. **DNS cutover — A/CNAME records ONLY; do NOT change nameservers.** Point the domain at Cloudflare per Cloudflare Pages custom-domain instructions. **Preserve MX, SPF, DKIM, DMARC and any verification TXT/CNAME exactly** so email/verifications don't break (SOP Phase 7). Lower TTL ~24–48h beforehand; cut over off-peak (avoid Fri/holidays).
-4. **SSL** valid on **both** `www` and non-`www` — test in Chrome *and* Safari (SOP Addendum B). Confirm the exact URL printed on any **QR codes / truck decals / business cards** resolves with a valid cert (Addendum C).
-5. **Submit `sitemap.xml` in GSC**, remove the old Wix sitemap, and **Request Indexing** for the homepage + top service pages. Watch the Page-indexing report for "Page with redirect" / "Crawled – not indexed" / "Duplicate canonical".
-6. **Verify GA4 in Realtime** and that GTM/Tag Assistant fires (after IDs are installed — section 2.2). Test a conversion.
-7. **Update the Google Business Profile website URL** to `https://www.bnbexteriors.com/` and confirm it loads from the GBP link. Update citations/social profiles that linked to old deep URLs.
-8. **Submit to Bing Webmaster Tools** (import from GSC).
-9. **Monitor vs baseline for 4–8 weeks:** GSC clicks/impressions/avg position, 404 spikes, Core Web Vitals. Keep the old Wix site live until the new site is confirmed stable (≥1–2 weeks), then decommission. Keep an archive of the old site.
+## 2. Redirect targets that are reasonable assumptions
+- Old → new mapping is 1:1 by service, so confidence is high. The only judgment call is the
+  Holiday Lighting page (placeholder content on the old site — see above).
+- The non-www → www redirect assumes **www** stays canonical (consistent with the old Wix
+  setup). If the client prefers the bare domain, flip the rule in `_redirects` **and** update
+  every canonical tag, the sitemap, and OG/Twitter URLs to match.
 
 ---
 
-## 7. Revision instructions — ambiguities
-
-- The task said "no revision instructions provided," but the **SOP cover page** carried two revision notes, both applied:
-  - *"Mobile optimize the site"* → responsive across breakpoints; base font bumped to ~17px for legibility (Addendum M); menu/CTA visible; images lazy-loaded and compressed.
-  - *"Full Name divided into First Name and Last Name on the webhook data"* → the demo already had separate visible fields; I added explicit `name="first_name"` / `name="last_name"` (+ autocomplete) so the **webhook payload** carries them separately. **You still need to wire the webhook** (section 2.5) for this to take effect on real submissions.
-- No other revision instructions were supplied. If the client/SEO partner has preferred exact meta titles/descriptions, target keywords, required slugs, or a real logo/OG image, supply them and they can be dropped in.
+## 3. Backlinks (requires Google Search Console / 3rd-party tools)
+- **Could not obtain backlink data** — this requires GSC (Links → Top linked pages) or a tool
+  like Ahrefs/Semrush. Before go-live, export the backlink profile and make sure every page that
+  has external links is either kept or 301-redirected (all current pages are).
+- **Likely highest-value backlink targets to prioritise:** the homepage (`/`) and the Contact
+  page, plus any service page that local directories / the Google Business Profile linked to.
+  Directory and social citations often point at the old Wix root domain — those are covered by
+  the www canonical + the pages all resolving.
 
 ---
 
-## 8. Nothing else outstanding is hidden
+## 4. Tracking & analytics — ACTION REQUIRED (none found on old site)
+- **GTM:** No Google Tag Manager container ID was found in the old Wix source. **None installed.**
+- **GA4:** No GA4 Measurement ID (`G-XXXXXXX`) found. **None installed.**
+- **Meta Pixel:** None found.
+- Wix typically manages analytics through its own dashboard, so IDs may exist **inside the Wix
+  admin** (Marketing & SEO → Analytics) that aren't exposed in public page source.
+  **Action:** log into the Wix account (and the client's Google Analytics / Tag Manager / Meta
+  Business accounts) to retrieve any existing GA4 / GTM / Pixel IDs, then add them to **every**
+  page in `./dist` (head + body) so historical data continuity is preserved. If none exist,
+  create a new GA4 property + GTM container before launch. **No tracking is currently on the new
+  site** — placeholders were intentionally NOT invented.
 
-Everything I could complete from the source material is built into `./dist`. The items above are the ones that require **client/agency access I don't have** (GBP, GSC, GA/GTM/Pixel accounts, the form/webhook backend, DNS) or a **human confirmation/decision**. None block the preview deploy; all should be resolved before/at production go-live.
+---
+
+## 5. NAP (Name / Address / Phone) — verify against Google Business Profile
+Used consistently across the site, footer, schema and contact page:
+- **Name:** B&B Exteriors
+- **Address:** Nanaimo, BC, Canada *(city-level only — the old Wix site shows no street address)*
+- **Phone:** 250-268-9826  (tel: `+12502689826`)
+- **Email:** info@bnbexteriors.com
+- **Hours:** Mon–Sat, 8:00am–6:00pm
+- **Service area:** Duncan → Qualicum Beach & surrounding areas (Vancouver Island)
+- **Facebook:** https://www.facebook.com/profile.php?id=100092324195486
+
+**⚠️ Verify NAP character-for-character against the Google Business Profile** (cannot access it).
+If the GBP lists a street address or suite, add it to the `PostalAddress` schema on the home and
+contact pages. The `geo` coordinates in schema are **approximate Nanaimo coordinates
+(49.1659, -123.9401)** — replace with the exact GBP location if a precise address exists.
+
+---
+
+## 6. Reviews / ratings schema
+- An `AggregateRating` (5.0, 3 reviews) is included, matching the **3 testimonials shown on the
+  page**. The testimonials are illustrative (carried from the demo). **Replace with real Google
+  reviews** and update `ratingValue` / `reviewCount` to the actual Google Business Profile totals
+  before launch, or remove the AggregateRating if real reviews can't be substantiated (fake
+  rating markup can trigger a Google manual action).
+
+---
+
+## 7. Images & assets
+- All images were **downloaded from the old Wix media library and localised** into `./dist/assets`
+  (no hotlinking anywhere). Filenames are descriptive/keyword-led and alt text is set.
+- **Two "images" the demo referenced were actually the B&B logo PNG and a small banner graphic**
+  (not photos) — they were dropped and replaced with real exterior-cleaning photos from the old
+  service pages.
+- **Favicon, 32px icon, apple-touch-icon and the 1200×630 OG image were generated locally** (navy
+  "B&B" brand mark). Swap in a real logo-based favicon/OG image if the client has brand assets.
+- The **Holiday Lighting** page reuses a general exterior photo — replace with a real holiday
+  lights photo when available.
+- The original Wix soft-wash before/after photo (`54E0AEB8…_edited.jpg`) and the holiday
+  `IMG_8767.jpg` had non-standard Wix IDs and were **not retrievable**; existing localised photos
+  were used instead. No broken images and no placeholders remain.
+
+---
+
+## 8. Lead form
+- Contact form keeps **First Name and Last Name as SEPARATE fields** and the **phone CTA is
+  retained** site-wide (top bar, hero, every CTA band, footer).
+- The form currently uses a **front-end demo handler** (`handleSubmit` in `/assets/site.js`) that
+  shows a thank-you message but **does not deliver anywhere yet**. **Action before launch:** wire
+  the form to a real endpoint (e.g. Cloudflare Pages Function, Formspree, Basin, or the client's
+  CRM). Requirements from the SOP: notification lands in the client inbox (not spam),
+  **Reply-To = customer email**, and First/Last captured as separate fields in the webhook payload.
+
+---
+
+## 9. Preview safety (DONE) + go-live robots swap
+- `./dist/robots.txt` currently **blocks all crawlers** (`Disallow: /`) so the public
+  `*.pages.dev` preview is NOT indexed.
+- `./dist/robots-production.txt` holds the real rules (`Allow: /` + Sitemap line).
+- **AT GO-LIVE:** replace `robots.txt` contents with `robots-production.txt` (i.e. copy/rename it
+  over `robots.txt`) and redeploy, so the live domain is crawlable and points to the sitemap.
+
+---
+
+## 10. Remaining manual go-live steps (from the migration SOP)
+1. Deploy `./dist` to Cloudflare Pages (Direct Upload). Confirm `index.html`, `_redirects`,
+   `robots.txt`, `sitemap.xml`, `404.html` and all page subfolders are present in the deploy.
+2. QA on the `*.pages.dev` preview: crawl for titles/H1s/canonicals, validate schema (Rich
+   Results Test), test every `_redirects` rule returns **301 → 200** in one hop, test forms and
+   phone links, run Lighthouse mobile.
+3. **Swap robots.txt to the production version** (step 9) and redeploy.
+4. **Point DNS using A / CNAME records ONLY** — point `A @` to the Cloudflare Pages IP and
+   `www` CNAME as Cloudflare specifies. **Leave MX, SPF, DKIM, DMARC and all verification TXT
+   records untouched** so email never breaks. Lower TTL ~24–48h before cutover.
+5. Reuse the **same GA4 / GTM** (once IDs are added — see §4); never create a brand-new property
+   if one already exists.
+6. In **Search Console:** submit `https://www.bnbexteriors.com/sitemap.xml`, remove the old Wix
+   sitemap, and **Request Indexing** for the homepage + top service pages. No "Change of Address"
+   is needed (same domain).
+7. **Verify GA4 in Realtime** with a live test visit; confirm tags fire (Tag Assistant).
+8. **Update the Google Business Profile** website URL to `https://www.bnbexteriors.com/` (and
+   consider deep-linking GBP services to the matching new service pages).
+9. Submit the sitemap to **Bing Webmaster Tools** too.
+10. **Monitor GSC for 404s for 4–8 weeks.** The moment a real old URL 404s, add a 301 to
+    `_redirects` and redeploy. Compare clicks/impressions/position against the pre-migration
+    baseline.
+11. Keep the old Wix site live until the new site is confirmed stable (≥1–2 weeks) before
+    cancelling.
+
+---
+
+## 11. Revision instructions
+- **None were provided** ("finalize the demo for production"). The demo was finalised: assets
+  localised, fonts self-hosted, full SEO head/schema added, the 4 demo services expanded into
+  their own ranking pages, the old Holiday Lighting page recreated, and a dedicated Contact page
+  built. No ambiguous revision items outstanding.
+
+---
+
+## 12. Reminder
+> The **complete set of indexed URLs and the full backlink profile can only be confirmed inside
+> Google Search Console.** Everything above was built from the public site + sitemap + robots.txt.
+> Before decommissioning the old Wix site, reconcile this build against the GSC indexed-pages and
+> top-linked-pages exports and patch any gaps in `_redirects`.
