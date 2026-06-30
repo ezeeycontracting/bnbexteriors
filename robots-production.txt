@@ -1,0 +1,6 @@
+# PRODUCTION ROBOTS — use this at go-live on https://www.bnbexteriors.com
+# Rename/replace robots.txt with this file once DNS points to production.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.bnbexteriors.com/sitemap.xml
