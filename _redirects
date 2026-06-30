@@ -1,23 +1,29 @@
 # ============================================================
-# B&B Exteriors — 301 redirect map (Cloudflare Pages)
-# Format: [old-path] [new-destination] [status]
-# Canonical host: https://www.bnbexteriors.com  (www, https)
-# Specific rules first; NO catch-all to homepage (avoids soft-404s).
+#  B&B Exteriors — Cloudflare Pages _redirects
+#  Canonical host = https://www.bnbexteriors.com  (matches old Wix canonical/sitemap)
+#  Rules are processed top-to-bottom; specific rules BEFORE any catch-all.
 # ============================================================
 
-# --- Canonical host: force non-www / http → https://www ---
-http://bnbexteriors.com/*      https://www.bnbexteriors.com/:splat   301!
-https://bnbexteriors.com/*     https://www.bnbexteriors.com/:splat   301!
-http://www.bnbexteriors.com/*  https://www.bnbexteriors.com/:splat   301!
+# --- Canonical host: force non-www -> www -------------------
+https://bnbexteriors.com/* https://www.bnbexteriors.com/:splat 301
+http://bnbexteriors.com/* https://www.bnbexteriors.com/:splat 301
 
-# --- Old Wix URLs → new pages (1:1 by relevance) ---
-/general-9      /gutter-cleaning/               301
-/general-9-1    /roof-cleaning-moss-removal/    301
-/general-9-2    /soft-washing/                  301
-/general-9-3    /window-cleaning/               301
-/general-9-4    /holiday-lighting/              301
-/contact-1      /contact/                       301
+# --- Old Wix URLs -> new pages (1:1, permanent) -------------
+/general-9 /gutter-cleaning-nanaimo/ 301
+/general-9-1 /roof-cleaning-moss-removal-nanaimo/ 301
+/general-9-2 /soft-washing-nanaimo/ 301
+/general-9-3 /window-cleaning-nanaimo/ 301
+/general-9-4 /holiday-light-installation-nanaimo/ 301
+/contact-1 /contact/ 301
 
-# --- Note: monitor Google Search Console for any old URL that 404s
-#     after launch (e.g. /about-us, /our-services, /testimonials) and
-#     add a 1:1 301 here to its best-match new page. See LOOSE-ENDS.md.
+# Trailing-slash variants of the old Wix slugs (safety)
+/general-9/ /gutter-cleaning-nanaimo/ 301
+/general-9-1/ /roof-cleaning-moss-removal-nanaimo/ 301
+/general-9-2/ /soft-washing-nanaimo/ 301
+/general-9-3/ /window-cleaning-nanaimo/ 301
+/general-9-4/ /holiday-light-installation-nanaimo/ 301
+/contact-1/ /contact/ 301
+
+# NOTE: No catch-all to "/" on purpose — genuinely missing URLs
+# should return the custom 404.html (avoids Google soft-404 penalties).
+# Add a new specific 301 here if GSC reports a real old URL 404ing.
