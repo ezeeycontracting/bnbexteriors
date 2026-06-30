@@ -1,0 +1,6 @@
+# STAGING / PREVIEW ONLY — blocks all crawlers.
+# Per SOP Phase 4: while testing on the *.pages.dev preview URL, rename this
+# file to robots.txt to keep Google out. BEFORE go-live, restore the
+# production robots.txt (Allow: /). Do NOT ship this version to the live domain.
+User-agent: *
+Disallow: /
