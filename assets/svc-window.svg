@@ -1,20 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="Window cleaning illustration">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" role="img" aria-label="Window cleaning illustration">
   <defs>
-    <linearGradient id="gW" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2E9CE0"/><stop offset=".55" stop-color="#1E73BE"/><stop offset="1" stop-color="#0E2C4B"/>
+    <linearGradient id="w" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E9CE0"/><stop offset="1" stop-color="#5cc4ff"/>
     </linearGradient>
   </defs>
-  <rect width="400" height="260" fill="url(#gW)"/>
-  <circle cx="320" cy="60" r="120" fill="#fff" opacity=".06"/>
-  <circle cx="80" cy="230" r="80" fill="#fff" opacity=".05"/>
-  <rect x="120" y="50" width="160" height="160" rx="8" fill="#ffffff" opacity=".12"/>
-  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".92">
-    <rect x="120" y="50" width="160" height="160" rx="8"/>
-    <path d="M200 50 V210 M120 130 H280"/>
+  <rect width="400" height="280" fill="url(#w)"/>
+  <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="135" y="55" width="130" height="150" rx="5"/>
+    <path d="M200 55 L200 205 M135 130 L265 130"/>
   </g>
-  <g stroke="#bfe6ff" stroke-width="6" stroke-linecap="round" opacity=".9">
-    <path d="M150 85 l36 36"/><path d="M150 100 l24 24"/>
+  <g fill="#fff" opacity=".35">
+    <path d="M150 70 L175 70 L150 110 L150 70 Z"/>
+    <path d="M210 140 L240 140 L210 185 L210 140 Z"/>
   </g>
-  <path d="M236 96 l60 -34" stroke="#eafff5" stroke-width="10" stroke-linecap="round" opacity=".95"/>
-  <circle cx="300" cy="58" r="9" fill="#eafff5" opacity=".95"/>
+  <g fill="none" stroke="#eafaff" stroke-width="6" stroke-linecap="round">
+    <path d="M285 95 L320 60"/><rect x="300" y="40" width="34" height="20" rx="4" transform="rotate(-45 317 50)" fill="#eafaff" stroke="none"/>
+  </g>
+  <g fill="#eafaff"><circle cx="300" cy="150" r="4"/><circle cx="315" cy="165" r="4"/><circle cx="295" cy="175" r="3"/></g>
 </svg>
